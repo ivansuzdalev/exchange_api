@@ -1,0 +1,9 @@
+{
+  "lockfileVersion": 1,
+  "dependencies": {
+    "express": "^4.17.1",
+    "fin-rounds": "^0.1.0",
+    "lru-cache": "^6.0.0",
+    "morgan": "^1.10.0"
+  }
+}
