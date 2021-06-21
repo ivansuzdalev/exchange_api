@@ -1,7 +1,7 @@
 var Round = require('fin-rounds').Round;
 
 var quote_amount_calcucale = function(rates_ob, quote_currency, base_amount){
-
+    console.log(quote_currency);
     exchange_rate = rates_ob[quote_currency];
     quote_amount = base_amount * exchange_rate;
     

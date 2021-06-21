@@ -1,7 +1,7 @@
 module.exports = {
     
     api_url: 'api.exchangerate-api.com',
-    api_params: '/v4/latest/EUR',
+    api_params: '/v4/latest/',
     api_port: '443'
     //api_url:'api.exchangeratesapi.io',
     //api_params: '/v1/latest?access_key=7f2e5a77d69ea6d5844fc36fbe40f234',
