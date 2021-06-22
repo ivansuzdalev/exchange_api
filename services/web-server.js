@@ -1,6 +1,6 @@
 const http = require('http');
 const express = require('express');
-const webServerConfig = require('../config/web-server.js');
+const webServerConfig = require('../config/web-server-config.js');
 const apiControllers = require('../controllers/api-controllers.js');
 const morgan = require('morgan');
 let httpServer;
@@ -18,6 +18,7 @@ function initialize() {
     /* Route "/quote?params" */
     apiControllers.getQuoteController(app);
 
+    //run server
     httpServer.listen(webServerConfig.port)
       .on('listening', () => {
         console.log(`Web server listening on localhost:${webServerConfig.port}`);
@@ -30,6 +31,7 @@ function initialize() {
   });
 }
 
+//On server close
 function close() {
   return new Promise((resolve, reject) => {
     httpServer.close((err) => {
@@ -39,7 +41,7 @@ function close() {
       } 
       resolve();
     });
-    //Kertame visus atidarytus socketus kad nelaukti kol patys užsidarys
+    //brake all opened sockets and dont wait
     resolve();
   });
 }

@@ -9,7 +9,7 @@ var options = {
     port: party_api_config.api_port
   };
 
-
+//Send HTTPS request to 3 party API and get responce [return string]
 function getCurrencyData(base_currency){
     
     options.path = party_api_config.api_params + base_currency;
@@ -30,8 +30,13 @@ function getCurrencyData(base_currency){
                     resolve(str);
                     //console.log(str);
                 });
+
+     
             }
         );
+        req.on('error', error => {
+            reject(error);
+        });
         req.end();
     });
 
