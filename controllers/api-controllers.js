@@ -1,5 +1,6 @@
 const partyExchangeProvider = require('../services/party-exchange-provider.js');
 const currencyCalculate = require('../services/currency_calculate.js');
+const supported_currency = require('../config/supported-currency.js');
 
 var LruCache = require('lru-cache');
 
@@ -24,35 +25,47 @@ let getQuoteController = function(app){
       base_currency = req.query.base_currency;
       quote_currency = req.query.quote_currency;
       base_amount = req.query.base_amount;
+      if(supported_currency.currency_arr[base_currency] == true) {
+        if(base_currency != undefined && quote_currency != undefined && base_amount != undefined){
 
-      if(base_currency != undefined && quote_currency != undefined && base_amount != undefined){
-
-        var rates_ob = lru_cache.get('rates_ob' + base_currency);
-        if(!rates_ob){
-          //send request to 3 party exchange API
-          Promise.resolve(partyExchangeProvider.getCurrencyData(base_currency)).then(function(result){
-            currency_data = JSON.parse(result);
-            rates_ob = currency_data.rates;
-            lru_cache.set('rates_ob' + base_currency, rates_ob);
-            
+          var rates_ob = lru_cache.get('rates_ob' + base_currency);
+          if(!rates_ob){
+            //send request to 3 party exchange API
+            Promise.resolve(partyExchangeProvider.getCurrencyData(base_currency)).then(function(result){
+              currency_data = JSON.parse(result);
+              rates_ob = currency_data.rates;
+              lru_cache.set('rates_ob' + base_currency, rates_ob);
+              
+              out_ob = currencyCalculate.quote_amount_calcucale(rates_ob, quote_currency, base_amount);
+  
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(out_ob));
+              
+            });
+          } else {
             out_ob = currencyCalculate.quote_amount_calcucale(rates_ob, quote_currency, base_amount);
-
+  
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(out_ob));
-            
-          });
+          }
+  
         } else {
-          out_ob = currencyCalculate.quote_amount_calcucale(rates_ob, quote_currency, base_amount);
-
           res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(out_ob));
+            //res.end(JSON.stringify(result));
+          res.end('{"error":' + error_message + '}');
         }
-
       } else {
         res.setHeader('Content-Type', 'application/json');
-          //res.end(JSON.stringify(result));
-        res.end('{"error":' + error_message + '}');
+        //res.end(JSON.stringify(result));
+        
+        var supported_currency_list = '';
+        for (const [key, value] of Object.entries(supported_currency.currency_arr)) {
+          supported_currency_list = supported_currency_list + ' ' + key;
+        }
+        
+        res.end('{"error":"supported only this base currency: ' + supported_currency_list + '"}');
       }
+
       
     });
 }
